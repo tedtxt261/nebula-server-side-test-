@@ -1,0 +1,82 @@
+<script>
+const win = document.getElementById("window1");
+const header = document.getElementById("dragHeader");
+const content = document.getElementById("windowContent");
+
+let offsetX = 0, offsetY = 0;
+let dragging = false;
+
+// 🖱️ DRAG (HEADER ONLY)
+header.addEventListener("mousedown", (e) => {
+    dragging = true;
+    offsetX = e.clientX - win.offsetLeft;
+    offsetY = e.clientY - win.offsetTop;
+    header.style.cursor = "grabbing";
+});
+
+document.addEventListener("mousemove", (e) => {
+    if (!dragging) return;
+
+    let x = e.clientX - offsetX;
+    let y = e.clientY - offsetY;
+
+    // 🧲 SNAP TO EDGES
+    const snap = 20;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    if (x < snap) x = 0;
+    if (y < snap) y = 0;
+    if (x + win.offsetWidth > w - snap) x = w - win.offsetWidth;
+    if (y + win.offsetHeight > h - snap) y = h - win.offsetHeight;
+
+    win.style.left = x + "px";
+    win.style.top = y + "px";
+});
+
+document.addEventListener("mouseup", () => {
+    dragging = false;
+    header.style.cursor = "grab";
+});
+
+// 📱 TOUCH SUPPORT
+header.addEventListener("touchstart", (e) => {
+    dragging = true;
+    const t = e.touches[0];
+    offsetX = t.clientX - win.offsetLeft;
+    offsetY = t.clientY - win.offsetTop;
+});
+
+document.addEventListener("touchmove", (e) => {
+    if (!dragging) return;
+    const t = e.touches[0];
+
+    let x = t.clientX - offsetX;
+    let y = t.clientY - offsetY;
+
+    const snap = 20;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    if (x < snap) x = 0;
+    if (y < snap) y = 0;
+    if (x + win.offsetWidth > w - snap) x = w - win.offsetWidth;
+    if (y + win.offsetHeight > h - snap) y = h - win.offsetHeight;
+
+    win.style.left = x + "px";
+    win.style.top = y + "px";
+});
+
+document.addEventListener("touchend", () => dragging = false);
+
+// ❌ CLOSE
+document.getElementById("closeBtn").onclick = () => {
+    win.style.display = "none";
+};
+
+// 🟡 MINIMIZE
+document.getElementById("minBtn").onclick = () => {
+    content.style.display =
+        content.style.display === "none" ? "block" : "none";
+};
+</script>
